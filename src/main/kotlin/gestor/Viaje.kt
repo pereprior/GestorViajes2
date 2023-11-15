@@ -36,7 +36,16 @@ class Viaje : Serializable {
         codviaje = construyeCodviaje()
     }
 
-    constructor(jsonViaje: Any?) : super()
+    constructor(jsonViaje: JSONObject) {
+        codviaje = jsonViaje["codviaje"].toString()
+        codprop = jsonViaje["codprop"].toString()
+        origen = jsonViaje["origen"].toString()
+        destino = jsonViaje["destino"].toString()
+        fecha = jsonViaje["fecha"].toString()
+        precio = jsonViaje["precio"].toString().toLong()
+        numplazas = jsonViaje["numplazas"].toString().toLong()
+        pasajeros = Vector()
+    }
 
     override fun toString(): String {
         return toJSON().toJSONString()

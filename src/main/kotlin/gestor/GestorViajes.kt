@@ -154,6 +154,12 @@ class GestorViajes {
         //POR IMPLEMENTAR
         val prueba = JSONObject()
 
+        val viaje = mapa[codviaje] as Viaje
+
+        if (viaje.quedanPlazas() && !viaje.finalizado()) {
+            prueba[codcli] = viaje.anyadePasajero(codcli)
+        }
+
         return prueba
     }
     /**
