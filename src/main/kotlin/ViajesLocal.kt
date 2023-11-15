@@ -1,3 +1,4 @@
+import gestor.GestorViajes
 
 
 fun main(args: Array<String>) {
@@ -19,7 +20,7 @@ fun main(args: Array<String>) {
         when(opcion) {
             1 -> gestor.guardaDatos()
             2 -> gestor.consultaViajes(readOrigen())
-            3 -> gestor.reservaViaje("", "")
+            3 -> gestor.reservaViaje("","")
             4 -> gestor.anulaReserva("", "")
             //5 -> gestor.ofertaViaje()
             //6 -> gestor.borraViaje()
@@ -35,11 +36,14 @@ fun readOrigen():String{
     return readln()
 }
 
-fun reserva() {
+fun reserva(): Pair<String, String> {
     print("Introduce el código del viaje: ")
     val codViaje = readln()
 
     print("Introduce tu código de cliente: ")
+    val codCli = readln()
+
+    return Pair(codViaje, codCli)
 
 }
 

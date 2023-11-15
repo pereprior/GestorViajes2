@@ -1,13 +1,13 @@
-import gestor.Viaje
+package gestor
+
 import org.json.simple.JSONArray
 import org.json.simple.JSONObject
+import org.json.simple.parser.JSONParser
 import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
 import java.io.IOException
 import java.text.ParseException
-import org.json.simple.parser.JSONParser;
-
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
@@ -118,6 +118,7 @@ class GestorViajes {
     private fun rellenaDiccionario(array: JSONArray) {
         for (i in 0..<array.size) {
             val jObject = array[i] as JSONObject
+            println(jObject.toString())
             val viaje = Viaje(jObject)
             mapa[jObject["codviaje"] as String] = viaje
         }
@@ -130,18 +131,17 @@ class GestorViajes {
      * @param origen
      * @return JSONArray de viajes con un origen dado. Vacío si no hay viajes disponibles con ese origen
      */
-    fun consultaViajes(origen: String?) {
+    fun consultaViajes(origen: String?):JSONArray {
+        val jsonArray = JSONArray()
 
-        for (i in 0..mapa.size){
-            val index = i.toString()
-            val viaje = mapa[index] as Viaje
-
-            println(viaje.toString())
+        mapa.forEach { (cod, viaje) ->
             if (viaje.origen==origen){
                 println(viaje.toString())
+                jsonArray.add(viaje)
             }
         }
 
+        return jsonArray
     }
     /**
      * El cliente codcli reserva el viaje codviaje
@@ -162,6 +162,7 @@ class GestorViajes {
 
         return prueba
     }
+
     /**
      * El cliente codcli anula su reserva del viaje codviaje
      *
@@ -202,20 +203,46 @@ class GestorViajes {
      * @param numplazas
      * @return JSONObject con los datos del viaje ofertado
      */
-    fun ofertaViaje(codcli: String, origen: String, destino: String, fecha: String, precio: Long, numplazas: Long): JSONObject {
-        //POR IMPLEMENTAR
+    fun ofertaViaje(
+        codcli: String?,
+        origen: String?,
+        destino: String?,
+        fecha: String?,
+        precio: Long,
+        numplazas: Long
+    ): JSONObject? {
+        // POR IMPLEMENTAR
+        if (es_fecha_valida(fecha!!) && precio > 0 && numplazas > 0) {
+            val viaje = Viaje(codcli, origen, destino, fecha, precio, numplazas)
+            mapa[viaje.codviaje] = viaje
+            return viaje.toJSON() // MODIFICAR
+        }
         return JSONObject()
     }
+
 
     /**
      * El cliente codcli borra un viaje que ha ofertado
      *
-     * @param codviaje    codigo del viaje a borrar
-     * @param codcli    codigo del cliente
+     * @param codviaje codigo del viaje a borrar
+     * @param codcli   codigo del cliente
      * @return JSONObject del viaje borrado. JSON vacio si no se ha borrado
      */
     fun borraViaje(codviaje: String, codcli: String): JSONObject {
-        //POR IMPLEMENTAR
-        return JSONObject()
+        // POR IMPLEMENTAR
+        val obj = JSONObject()
+        val it = mapa.values.iterator()
+        while (it.hasNext()) {
+            val lugar = it.next()
+            if (lugar.codviaje == codviaje) {
+                if (lugar.codprop == codcli) {
+                    if (!lugar.finalizado()) {
+                        obj.putAll(lugar.toJSON())
+                        it.remove()
+                    }
+                }
+            }
+        }
+        return obj // MODIFICAR
     }
 }
